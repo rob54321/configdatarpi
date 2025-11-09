@@ -1,0 +1,51 @@
+#!/bin/sh
+##################################################
+# configdata:postinst
+##################################################
+
+# this script only runs during configure.
+# if $1 is not equal to configure, exit
+test "$1" = "configure" || exit 0;
+
+# xz-utils is required for untarring
+# this package is installed with dpkg -i configdata
+#pre-depends xz-utils does not work
+# apt install also does not work here
+
+# postinstall sets mode of /etc/sudoers.d/robert
+# to -r-r-----
+chmod 0440 /etc/sudoers.d/robert
+chown root:root /etc/sudoers.d/robert
+
+# the xorg user config ~/.config/dconf/user
+# should be deleted it it exists.
+
+# /home/robert/config.tar.xz is archived because
+# some of the config files contain tokens for a login.
+# github detects these tokens and disables them.
+# the archive hides these tokens.
+# /home/robert/config.tar.xz must be extracted
+cd /home/robert
+sudo -u robert tar --overwrite --xz -xvf config.tar.xz
+
+
+# remove config.tar.xz
+rm -vf /home/robert/config.tar.xz
+
+# rem build and xtract
+rm -vf /home/robert/build
+rm -vf /home/robert/xtract
+
+
+# setup default console with Terminus
+cd /etc/default
+# make a backup if it does not exist
+
+test -f /etc/default/console-setup.bak || cp -v /etc/default/console-setup /etc/default/console-setup.bak
+
+# edit console-setup to set fonts
+/usr/local/bin/stedit.pl -f /etc/default/console-setup -s /FONTFACE=.*/FONTFACE="Terminus"/ -s /FONTSIZE=.*/FONTSIZE="14x28"/ -o -w;
+
+# implement the new fontsize
+setupcon -f
+setupcon --save
