@@ -1,0 +1,8 @@
+#!/bin/bash
+# extract config.tar.xz and remove config.tar.xz
+
+# must be run in /home/robert/
+cd /home/robert
+tar --xz --overwrite -xvf config.tar.xz
+
+rm -vf config.tar.xz
