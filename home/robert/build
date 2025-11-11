@@ -1,4 +1,4 @@
 #!/bin/bash
 # script to build config.tar.xz after an update
 # must be run in /home/robert/configdata
-tar --xz -C /home/robert -cvf config.tar.xz .bash_aliases .config/ubuntu-mate .config/geany .config/dconf .config/gh .config/rclone .gitconfig .git-credentials
+tar --xz -C /home/robert -cvf config.tar.xz .mozilla .bash_aliases .config/ubuntu-mate .config/geany .config/dconf .config/gh .config/rclone .gitconfig .git-credentials
