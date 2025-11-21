@@ -49,3 +49,22 @@ test -f /etc/default/console-setup.bak || cp -v /etc/default/console-setup /etc/
 # implement the new fontsize
 setupcon -f
 setupcon --save
+
+# edit /boot/firmware/config.txt
+# add fan and clock commands
+
+
+
+[all]
+# overclocking
+# arm_freq=2800
+# gpu_freq=1000
+# over_voltage_delta=50000
+# maintain clock max
+# force_turbo=1
+
+# fan stuff
+# dtparam=fan_temp0=35000
+# dtparam=fan_temp0_hyst=5000
+dtparam=fan_temp0_speed=210
+
