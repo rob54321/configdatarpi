@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "GPU temp:  `vcgencmd measure_temp`"
+echo ""
+cpu=$(</sys/class/thermal/thermal_zone0/temp)
+echo "CPU temp: $((cpu/1000))"
