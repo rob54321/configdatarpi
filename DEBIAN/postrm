@@ -17,4 +17,4 @@ setupcon -f
 setupcon --save
 
 # delete lines that were added to config.txt
-sed -i -e '/^# overclocking$/,/dtparam=fan_temp0_speed=/d' /boot/firmware/config.txt
+/usr/bin/sed -i -e '/^# overclocking$/,/dtparam=fan_temp0_speed=/d' /boot/firmware/config.txt
