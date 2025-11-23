@@ -1,9 +1,9 @@
 Package: configdatarpi
-Version: 1.0.6
+Version: 1.0.7
 Architecture: arm64
 Maintainer: Robert Key robertkey021@gmail.com
 Section: myown
-Pre-depends: stedit, geany, geany-plugins, geany-common
+Pre-depends: stedit, geany, geany-plugins, geany-common, gh, rclone, git, git-doc, git-man, subversion
 Depends: xz-utils
 Priority: optional
 Description: Rpi config data for git, rclone, gh, geany, bash-aliases etc.
