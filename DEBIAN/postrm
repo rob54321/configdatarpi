@@ -18,3 +18,8 @@ setupcon --save
 
 # delete lines that were added to config.txt
 /usr/bin/sed -i -e '/^# overclocking$/,/dtparam=fan_temp0_speed=/d' /boot/firmware/config.txt
+
+# remove files from config.tar.xz
+cd /home/robert
+rm -rf .mozilla .config/ubuntu-mate .config/geany .config/dconf .config/gh .config/rclone .gitconfig .git-credentials
+
