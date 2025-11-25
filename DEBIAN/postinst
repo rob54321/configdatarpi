@@ -50,7 +50,26 @@ test -f /etc/default/console-setup.bak || cp -v /etc/default/console-setup /etc/
 setupcon -f
 setupcon --save
 
+#######################################################################
 # edit /boot/firmware/config.txt
+#######################################################################
+# disable overscan to remove border in x windows
+# uncomment it if it is commented out
+/usr/local/bin/stedit.pl -s $'/^#disable_overscan=1/disable_overscan=1/' /boot/firmware/config.txt
+
+# add wifi disable and bt disable as comments
+# in case they are needed later
+# delete all lines that disable wifi
+#sed -i -e '/disable.*wifi/d' \
+#	   -e '/disable.*blue/d' \
+#	   -e '/disable-bt/d' /boot/firmware/config.txt
+
+#/usr/local/bin/stedit.pl -i $'/^\[cm4\]/# disable wifi\n# dtoverlay=disable-wifi\n\n# disable bluetooth\n# dtoverlay=disable-bt\n/a' /boot/firmware/config.txt
+
+# setup hdmi 4k
+sed -i -e '/hdmi_enable_4kp60/d' /boot/firmware/config.txt
+sed -i -e '$a\hdmi_enable_4kp60=1' /boot/firmware/config.txt
+
 # add fan and clock commands
 # delete lines so they are not duplicated
 sed -i -e '/^# overclocking$/,/dtparam=fan_temp0_speed=/d' /boot/firmware/config.txt
