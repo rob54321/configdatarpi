@@ -1,6 +1,6 @@
 #!/bin/bash
 ##################################################
-# configdata:postinst
+# configdatarpi:postinst
 ##################################################
 
 # this script only runs during configure.
