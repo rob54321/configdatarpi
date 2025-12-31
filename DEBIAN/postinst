@@ -115,8 +115,8 @@ sed -i -e '/^# overclocking$/,/dtparam=fan_temp0_speed=/d' /boot/firmware/config
 # create mask = 0700 -> 0755
 # directory mask = 0700 -> 0755
 # are the only changes to the section
-sed -i -e '/homes/,/netlogon/ /browseable = no/browseable = yes/s' /etc/samba/smb.conf
-sed -i -e '/homes/,/netlogon/ /read only = yes/read only = no/s' /etc/samba/smb.conf
-sed -i -e '/homes/,/netlogon/ /create mask = .*/create mask = 0755/s' /etc/samba/smb.conf
-sed -i -e '/homes/,/netlogon/ /directory mask = .*/directory mask = 0775/s' /etc/samba/smb.conf
+sed -i -e '/homes/,/netlogon/ s/browseable = no/browseable = yes/' /etc/samba/smb.conf
+sed -i -e '/homes/,/netlogon/ s/read only = yes/read only = no/' /etc/samba/smb.conf
+sed -i -e '/homes/,/netlogon/ s/create mask = .*/create mask = 0755/' /etc/samba/smb.conf
+sed -i -e '/homes/,/netlogon/ s/directory mask = .*/directory mask = 0775/' /etc/samba/smb.conf
 exit 0;
