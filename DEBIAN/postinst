@@ -105,7 +105,6 @@ sed -i -e '/^# overclocking$/,/dtparam=fan_temp0_speed=/d' /boot/firmware/config
 
 # append the lines
 /usr/local/bin/stedit.pl -f /boot/firmware/config.txt -i $'/\[all\]/# overclocking\n# arm_freq=2800\n# gpu_freq=1000\n# over_voltage_delta=5000\n# maintain clock max\n# force_turbo=1\n\n# fan stuff\n# dtparam=fan_temp0=35000\n# dtparam=fan_temp0_hyst=5000\ndtparam=fan_temp0_speed=210/a' -o -w
-exit 0
 
 #########################################################################
 # edit /etc/samba/smb.conf
@@ -120,3 +119,4 @@ sed -i -e '/homes/,/netlogon/ /browseable = no/browseable = yes/s' /etc/samba/sm
 sed -i -e '/homes/,/netlogon/ /read only = yes/read only = no/s' /etc/samba/smb.conf
 sed -i -e '/homes/,/netlogon/ /create mask = .*/create mask = 0755/s' /etc/samba/smb.conf
 sed -i -e '/homes/,/netlogon/ /directory mask = .*/directory mask = 0775/s' /etc/samba/smb.conf
+exit 0;
