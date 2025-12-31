@@ -119,4 +119,10 @@ sed -i -e '/homes/,/netlogon/ s/browseable = no/browseable = yes/' /etc/samba/sm
 sed -i -e '/homes/,/netlogon/ s/read only = yes/read only = no/' /etc/samba/smb.conf
 sed -i -e '/homes/,/netlogon/ s/create mask = .*/create mask = 0755/' /etc/samba/smb.conf
 sed -i -e '/homes/,/netlogon/ s/directory mask = .*/directory mask = 0775/' /etc/samba/smb.conf
+# restart
+systemctl restart smbd nmbd samba smb
+
+# set the samba password to same as robert
+echo " Enter the password for samba, same as for robert"
+smbpasswd -L -a robert
 exit 0;
