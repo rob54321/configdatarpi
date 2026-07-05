@@ -1,9 +1,9 @@
 Package: configdatarpi
-Version: 1.1.9
+Version: 1.2.0
 Architecture: arm64
 Maintainer: Robert Key robertkey021@gmail.com
 Section: myown
-Pre-depends: stedit
+Pre-depends: initialise-linux
 Depends: samba, xz-utils, nano, lomiri-wallpapers, lomiri-wallpapers-16.04, lomiri-wallpapers-20.04, geany, geany-common, geany-plugins, gh, rclone, git, git-man, subversion, builddebiantree, mtools, dosfstools
 Priority: optional
 Description: Rpi config data for git, rclone, gh, geany, bash-aliases etc.
