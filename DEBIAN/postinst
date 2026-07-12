@@ -55,7 +55,8 @@ cd /etc/default
 test -f /etc/default/console-setup.bak || cp -v /etc/default/console-setup /etc/default/console-setup.bak
 
 # edit console-setup to set fonts
-/usr/local/bin/stedit.pl -f /etc/default/console-setup -s /FONTFACE=.*/FONTFACE="Terminus"/ -s /FONTSIZE=.*/FONTSIZE="14x28"/ -o -w;
+# /usr/local/bin/stedit.pl -f /etc/default/console-setup -s /FONTFACE=.*/FONTFACE="Terminus"/ -s /FONTSIZE=.*/FONTSIZE="14x28"/ -o -w;
+/usr/bin/sed  -i -e 's/FONTFACE=.*/FONTFACE="Terminus"/' -e ' s/FONTSIZE=.*/FONTSIZE="14x28"/' /etc/default/console-setup
 
 # implement the new fontsize
 setupcon -f
@@ -66,7 +67,9 @@ setupcon --save
 #######################################################################
 # disable overscan to remove border in x windows
 # uncomment it if it is commented out
-/usr/local/bin/stedit.pl -s $'/^#disable_overscan=1/disable_overscan=1/' /boot/firmware/config.txt
+#/usr/local/bin/stedit.pl -s $'/^#disable_overscan=1/disable_overscan=1/' /boot/firmware/config.txt
+
+sed -i -e 's/^#disable_overscan=1/disable_overscan=1/' /boot/firmware/config.txt
 
 # add wifi disable and bt disable as comments
 # in case they are needed later
@@ -104,8 +107,9 @@ sed -i -e '/^# overclocking$/,/dtparam=fan_temp0_speed=/d' /boot/firmware/config
 ########################################################################
 
 # append the lines
-/usr/local/bin/stedit.pl -f /boot/firmware/config.txt -i $'/\[all\]/# overclocking\n# arm_freq=2800\n# gpu_freq=1000\n# over_voltage_delta=5000\n# maintain clock max\n# force_turbo=1\n\n# fan stuff\n# dtparam=fan_temp0=35000\n# dtparam=fan_temp0_hyst=5000\ndtparam=fan_temp0_speed=210/a' -o -w
+#/usr/local/bin/stedit.pl -f /boot/firmware/config.txt -i $'/\[all\]/# overclocking\n# arm_freq=2800\n# gpu_freq=1000\n# over_voltage_delta=5000\n# maintain clock max\n# force_turbo=1\n\n# fan stuff\n# dtparam=fan_temp0=35000\n# dtparam=fan_temp0_hyst=5000\ndtparam=fan_temp0_speed=210/a' -o -w
 
+sed -i -e '$a\\n# overclocking\n# arm_freq=2800\n# gpu_freq=1000\n# over_voltage_delta=5000\n# maintain clock max\n# force_turbo=1\n\n# fan stuff\n#dtparam=fan_temp0=35000\n# dtparam=fan_temp0_hyst=5000\ndtparam=fan_temp0_speed=210/n' /boot/firmware/config.txt
 #########################################################################
 # edit /etc/samba/smb.conf
 #########################################################################
