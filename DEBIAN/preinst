@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+# this script determines if we are upgrading or installing.
+# the status is written to /tmp/configdatarpi-status
+# the first parameter $1 is the status
+echo "$1" > /tmp/configdatarpi-status
