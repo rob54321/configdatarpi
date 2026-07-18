@@ -2,4 +2,4 @@
 # script to build config.tar.xz after an update
 # must be run in /home/robert/
 cd /home/robert
-tar --xz -C /home/robert -cvf config.tar.xz --exclude=*/storage .mozilla .bash_aliases .gitconfig .git-credentials .config/dconf .config/geany .config/gh .config/rclone .config/lxpanel-pi .config/lxsession .config/openbox .config/pcmanfm .config/konsolerc .config/konsolesshconfig .config/lxterminal .config/mate-session .config/mate .config/ubuntu-mate .config/gtk-3.0 .local/share/konsole .local/share/themes .local/state/konsolestaterc
+tar --xz -C /home/robert -cvf config.tar.xz --exclude=*/storage .mozilla .bash_aliases .gitconfig .git-credentials .config/dconf .config/geany .config/gh .config/rclone .config/lxpanel-pi .config/lxsession .config/openbox .config/pcmanfm .config/konsolerc .config/konsolesshconfig .config/lxterminal .config/mate-session .config/mate .config/ubuntu-mate .config/gtk-3.0 .config/libreoffice .local/share/konsole .local/share/themes .local/state/konsolestaterc
