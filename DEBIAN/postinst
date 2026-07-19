@@ -3,6 +3,11 @@
 # configdatarpi:postinst
 ##################################################
 
+# postinstall sets mode of /etc/sudoers.d/robert
+# to -r-r-----
+chmod 0440 /etc/sudoers.d/robert
+chown root:root /etc/sudoers.d/robert
+
 # this script runs for install, not upgrade
 # get the status from /tmp/configdatarpi-status
 # which was written by preinst
@@ -13,11 +18,6 @@ test "${STATUS}" = "install" || exit 0;
 # this package is installed with dpkg -i configdata
 #pre-depends xz-utils does not work
 # apt install also does not work here
-
-# postinstall sets mode of /etc/sudoers.d/robert
-# to -r-r-----
-chmod 0440 /etc/sudoers.d/robert
-chown root:root /etc/sudoers.d/robert
 
 # the xorg user config ~/.config/dconf/user
 # should be deleted it it exists.
