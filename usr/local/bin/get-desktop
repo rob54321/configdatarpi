@@ -1,0 +1,2 @@
+#!/usr/bin/bash
+update-alternatives --get-selections | grep "x-session-manager"
