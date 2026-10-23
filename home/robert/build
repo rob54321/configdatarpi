@@ -3,6 +3,7 @@
 # must be run in /home/robert/
 cd /home/robert
 tar --xz -C /home/robert -cvf config.tar.xz --exclude=*/storage \
+--exclude=.config/mozilla \
 .bash_aliases \
 .gitconfig \
 .git-credentials \
