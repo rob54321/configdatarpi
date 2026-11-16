@@ -4,6 +4,7 @@
 cd /home/robert
 tar --xz -C /home/robert -cvf config.tar.xz --exclude=*/storage \
 --exclude=.config/mozilla \
+--exclude=.local/bin/copilot \
 .bash_aliases \
 .gitconfig \
 .git-credentials \
