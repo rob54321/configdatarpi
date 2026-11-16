@@ -12,24 +12,140 @@ chown root:root /etc/sudoers.d/robert
 # get the status from /tmp/configdatarpi-status
 # which was written by preinst
 STATUS=`cat /tmp/configdatarpi-status`
-test "${STATUS}" = "install" || exit 0;
+if test "${STATUS}" = "install"; then
 
-# xz-utils is required for untarring
-# this package is installed with dpkg -i configdata
-#pre-depends xz-utils does not work
-# apt install also does not work here
+	# xz-utils is required for untarring
+	# this package is installed with dpkg -i configdata
+	#pre-depends xz-utils does not work
+	# apt install also does not work here
 
-# the xorg user config ~/.config/dconf/user
-# should be deleted it it exists.
+	# the xorg user config ~/.config/dconf/user
+	# should be deleted it it exists.
 
-# /home/robert/config.tar.xz is archived because
-# some of the config files contain tokens for a login.
-# github detects these tokens and disables them.
-# the archive hides these tokens.
-# /home/robert/config.tar.xz must be extracted
-cd /home/robert
-sudo -u robert tar --overwrite --xz -xvf config.tar.xz
+	# /home/robert/config.tar.xz is archived because
+	# some of the config files contain tokens for a login.
+	# github detects these tokens and disables them.
+	# the archive hides these tokens.
+	# /home/robert/config.tar.xz must be extracted
+	cd /home/robert
+	sudo -u robert tar --overwrite --xz -xvf config.tar.xz
 
+
+	# remove config.tar.xz
+	rm -vf /home/robert/config.tar.xz
+
+	# rem build and xtract
+	rm -vf /home/robert/build
+	rm -vf /home/robert/xtract
+
+
+	# edit nanorc
+	sed -i -e 's/^# set autoindent/set autoindent/' \
+		-e 's/^# set linenumbers/set linenumbers/' \
+		-e 's/^# set smooth/set smooth/' \
+		-e 's/^# set multibuffer/set multibuffer/' \
+		-e 's/^# set positionlog/set positionlog/' \
+		-e 's/^# set selectedcolor lightwhite,magenta/set selectedcolor lightwhite,magenta/' \
+		-e 's/^# set numbercolor cyan/set numbercolor cyan/' \
+		-e 's/^# set keycolor cyan/set keycolor cyan/' /etc/nanorc
+
+
+	# setup default console with Terminus
+	cd /etc/default
+	# make a backup if it does not exist
+
+	test -f /etc/default/console-setup.bak || cp -v /etc/default/console-setup /etc/default/console-setup.bak
+
+	# edit console-setup to set fonts
+	# /usr/local/bin/stedit.pl -f /etc/default/console-setup -s /FONTFACE=.*/FONTFACE="Terminus"/ -s /FONTSIZE=.*/FONTSIZE="14x28"/ -o -w;
+	/usr/bin/sed  -i -e 's/FONTFACE=.*/FONTFACE="Terminus"/' -e ' s/FONTSIZE=.*/FONTSIZE="14x28"/' /etc/default/console-setup
+
+	# implement the new fontsize
+	setupcon -f
+	setupcon --save
+
+	#######################################################################
+	# edit /boot/firmware/config.txt
+	#######################################################################
+	# disable overscan to remove border in x windows
+	# uncomment it if it is commented out
+	#/usr/local/bin/stedit.pl -s $'/^#disable_overscan=1/disable_overscan=1/' /boot/firmware/config.txt
+
+	sed -i -e 's/^#disable_overscan=1/disable_overscan=1/' /boot/firmware/config.txt
+
+	# add wifi disable and bt disable as comments
+	# in case they are needed later
+	# delete all lines that disable wifi
+	#sed -i -e '/disable.*wifi/d' \
+	#	   -e '/disable.*blue/d' \
+	#	   -e '/disable-bt/d' /boot/firmware/config.txt
+
+	#/usr/local/bin/stedit.pl -i $'/^\[cm4\]/# disable wifi\n# dtoverlay=disable-wifi\n\n# disable bluetooth\n# dtoverlay=disable-bt\n/a' /boot/firmware/config.txt
+
+	# setup hdmi 4k
+	sed -i -e '/hdmi_enable_4kp60/d' /boot/firmware/config.txt
+	sed -i -e '$a\hdmi_enable_4kp60=1' /boot/firmware/config.txt
+
+	# add fan and clock commands
+	# delete lines so they are not duplicated
+	sed -i -e '/^# overclocking$/,/dtparam=fan_temp0_speed=/d' /boot/firmware/config.txt
+
+	########################################################################
+	# below is a list of the commands appended to /boot/firmware/config.txt
+	########################################################################
+	# [all]
+	# overclocking
+	# arm_freq=2800
+	# gpu_freq=1000
+	# over_voltage_delta=50000
+	# maintain clock max
+	# force_turbo=1
+
+	# fan stuff
+	# dtparam=fan_temp0=35000
+	# dtparam=fan_temp0_hyst=5000
+	# dtparam=fan_temp0_speed=210
+
+	########################################################################
+
+	# append the lines
+	#/usr/local/bin/stedit.pl -f /boot/firmware/config.txt -i $'/\[all\]/# overclocking\n# arm_freq=2800\n# gpu_freq=1000\n# over_voltage_delta=5000\n# maintain clock max\n# force_turbo=1\n\n# fan stuff\n# dtparam=fan_temp0=35000\n# dtparam=fan_temp0_hyst=5000\ndtparam=fan_temp0_speed=210/a' -o -w
+
+	sed -i -e '$a\\n# overclocking\n# arm_freq=2800\n# gpu_freq=1000\n# over_voltage_delta=5000\n# maintain clock max\n# force_turbo=1\n\n# fan stuff\n#dtparam=fan_temp0=35000\n# dtparam=fan_temp0_hyst=5000\ndtparam=fan_temp0_speed=210/n' /boot/firmware/config.txt
+	#########################################################################
+	# edit /etc/samba/smb.conf
+	#########################################################################
+	# edit the [homes] section only
+	# browseable = no -> yes
+	# read only = yes -> no
+	# create mask = 0700 -> 0755
+	# directory mask = 0700 -> 0755
+	# are the only changes to the section
+	sed -i -e '/homes/,/netlogon/ s/browseable = no/browseable = yes/' /etc/samba/smb.conf
+	sed -i -e '/homes/,/netlogon/ s/read only = yes/read only = no/' /etc/samba/smb.conf
+	sed -i -e '/homes/,/netlogon/ s/create mask = .*/create mask = 0755/' /etc/samba/smb.conf
+	sed -i -e '/homes/,/netlogon/ s/directory mask = .*/directory mask = 0775/' /etc/samba/smb.conf
+	# restart
+	systemctl restart smbd nmbd samba smb
+
+	# set the samba password to same as robert
+	echo " Enter the password for samba, same as for robert"
+	smbpasswd -L -a robert
+else
+	# this is for upgrading
+
+	# this code is run for upgrade
+	# /home/robert/config.tar.xz is archived because
+	# some of the config files contain tokens for a login.
+	# github detects these tokens and disables them.
+	# the archive hides these tokens.
+	# /home/robert/config.tar.xz must be extracted
+	# prompt for overwrite of config.tar.xz
+	cd /home/robert
+	read -p "Do you want to overwrite values in .config and .local with defaults? : answer(no/yes) default no: " -t 20 ANSWER
+
+	test "${ANSWER}" = "yes" && sudo -u robert tar --overwrite --xz -xvf config.tar.xz
+fi
 
 # remove config.tar.xz
 rm -vf /home/robert/config.tar.xz
@@ -38,97 +154,4 @@ rm -vf /home/robert/config.tar.xz
 rm -vf /home/robert/build
 rm -vf /home/robert/xtract
 
-
-# edit nanorc
-sed -i -e 's/^# set autoindent/set autoindent/' \
-	   -e 's/^# set linenumbers/set linenumbers/' \
-	   -e 's/^# set smooth/set smooth/' \
-	   -e 's/^# set multibuffer/set multibuffer/' \
-	   -e 's/^# set positionlog/set positionlog/' \
-	   -e 's/^# set selectedcolor lightwhite,magenta/set selectedcolor lightwhite,magenta/' \
-	   -e 's/^# set numbercolor cyan/set numbercolor cyan/' \
-	   -e 's/^# set keycolor cyan/set keycolor cyan/' /etc/nanorc
-
-
-# setup default console with Terminus
-cd /etc/default
-# make a backup if it does not exist
-
-test -f /etc/default/console-setup.bak || cp -v /etc/default/console-setup /etc/default/console-setup.bak
-
-# edit console-setup to set fonts
-# /usr/local/bin/stedit.pl -f /etc/default/console-setup -s /FONTFACE=.*/FONTFACE="Terminus"/ -s /FONTSIZE=.*/FONTSIZE="14x28"/ -o -w;
-/usr/bin/sed  -i -e 's/FONTFACE=.*/FONTFACE="Terminus"/' -e ' s/FONTSIZE=.*/FONTSIZE="14x28"/' /etc/default/console-setup
-
-# implement the new fontsize
-setupcon -f
-setupcon --save
-
-#######################################################################
-# edit /boot/firmware/config.txt
-#######################################################################
-# disable overscan to remove border in x windows
-# uncomment it if it is commented out
-#/usr/local/bin/stedit.pl -s $'/^#disable_overscan=1/disable_overscan=1/' /boot/firmware/config.txt
-
-sed -i -e 's/^#disable_overscan=1/disable_overscan=1/' /boot/firmware/config.txt
-
-# add wifi disable and bt disable as comments
-# in case they are needed later
-# delete all lines that disable wifi
-#sed -i -e '/disable.*wifi/d' \
-#	   -e '/disable.*blue/d' \
-#	   -e '/disable-bt/d' /boot/firmware/config.txt
-
-#/usr/local/bin/stedit.pl -i $'/^\[cm4\]/# disable wifi\n# dtoverlay=disable-wifi\n\n# disable bluetooth\n# dtoverlay=disable-bt\n/a' /boot/firmware/config.txt
-
-# setup hdmi 4k
-sed -i -e '/hdmi_enable_4kp60/d' /boot/firmware/config.txt
-sed -i -e '$a\hdmi_enable_4kp60=1' /boot/firmware/config.txt
-
-# add fan and clock commands
-# delete lines so they are not duplicated
-sed -i -e '/^# overclocking$/,/dtparam=fan_temp0_speed=/d' /boot/firmware/config.txt
-
-########################################################################
-# below is a list of the commands appended to /boot/firmware/config.txt
-########################################################################
-# [all]
-# overclocking
-# arm_freq=2800
-# gpu_freq=1000
-# over_voltage_delta=50000
-# maintain clock max
-# force_turbo=1
-
-# fan stuff
-# dtparam=fan_temp0=35000
-# dtparam=fan_temp0_hyst=5000
-# dtparam=fan_temp0_speed=210
-
-########################################################################
-
-# append the lines
-#/usr/local/bin/stedit.pl -f /boot/firmware/config.txt -i $'/\[all\]/# overclocking\n# arm_freq=2800\n# gpu_freq=1000\n# over_voltage_delta=5000\n# maintain clock max\n# force_turbo=1\n\n# fan stuff\n# dtparam=fan_temp0=35000\n# dtparam=fan_temp0_hyst=5000\ndtparam=fan_temp0_speed=210/a' -o -w
-
-sed -i -e '$a\\n# overclocking\n# arm_freq=2800\n# gpu_freq=1000\n# over_voltage_delta=5000\n# maintain clock max\n# force_turbo=1\n\n# fan stuff\n#dtparam=fan_temp0=35000\n# dtparam=fan_temp0_hyst=5000\ndtparam=fan_temp0_speed=210/n' /boot/firmware/config.txt
-#########################################################################
-# edit /etc/samba/smb.conf
-#########################################################################
-# edit the [homes] section only
-# browseable = no -> yes
-# read only = yes -> no
-# create mask = 0700 -> 0755
-# directory mask = 0700 -> 0755
-# are the only changes to the section
-sed -i -e '/homes/,/netlogon/ s/browseable = no/browseable = yes/' /etc/samba/smb.conf
-sed -i -e '/homes/,/netlogon/ s/read only = yes/read only = no/' /etc/samba/smb.conf
-sed -i -e '/homes/,/netlogon/ s/create mask = .*/create mask = 0755/' /etc/samba/smb.conf
-sed -i -e '/homes/,/netlogon/ s/directory mask = .*/directory mask = 0775/' /etc/samba/smb.conf
-# restart
-systemctl restart smbd nmbd samba smb
-
-# set the samba password to same as robert
-echo " Enter the password for samba, same as for robert"
-smbpasswd -L -a robert
-exit 0;
+exit 0
