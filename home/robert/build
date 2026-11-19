@@ -11,4 +11,5 @@ tar --xz -C /home/robert -cvf config.tar.xz --exclude=*/storage \
 .config \
 .local \
 .vscode \
+.copilot \
 .vscode-shared
